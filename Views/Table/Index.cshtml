@@ -1,0 +1,543 @@
+﻿@model IEnumerable<RestoManager.Models.Tables>
+@{
+    Layout = null;
+    var yemekler = ViewBag.Yemekler as IEnumerable<RestoManager.Models.MenuItems>;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestoManager</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%233b82f6%22/><text y=%2250%%22 x=%2250%%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2250%22 fill=%22white%22 font-family=%22Segoe UI, sans-serif%22 font-weight=%22900%22>RM</text></svg>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-darker: #0f172a;
+            --bg-panel: #1e293b;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 380px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow-x: hidden;
+        }
+
+        .brand-header {
+            padding: 35px 20px;
+            text-align: center;
+        }
+
+        .logo-circle {
+            width: 65px;
+            height: 65px;
+            background: var(--accent-blue);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            transform: rotate(-6deg);
+        }
+
+            .logo-circle span {
+                color: white;
+                font-weight: 900;
+                font-size: 26px;
+                transform: rotate(6deg);
+            }
+
+        .user-card {
+            margin: 10px 25px 25px;
+            padding: 25px;
+            background: var(--bg-darker);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .table-list {
+            padding: 10px 20px;
+            overflow-y: auto;
+            flex: 1;
+            overflow-x: hidden;
+        }
+
+        .table-btn {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 10px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+            .table-btn:hover, .table-btn.active {
+                border-color: var(--accent-blue);
+                background: rgba(59, 130, 246, 0.1);
+                color: var(--text-main);
+            }
+
+        .status-badge {
+            font-size: 11px;
+            font-weight: 900;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .status-bos {
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .status-dolu {
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            overflow-x: hidden;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 5px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+            .tab-btn.active {
+                background: var(--accent-blue);
+                color: white;
+            }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .menu-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            padding: 35px 15px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+            .menu-card:hover {
+                border-color: var(--accent-blue);
+                transform: translateY(-5px);
+            }
+
+        .cart-panel {
+            width: 0;
+            background-color: var(--bg-panel);
+            border-left: 0 solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            opacity: 0;
+        }
+
+            .cart-panel.open {
+                width: 450px;
+                border-left: 1px solid var(--border-color);
+                opacity: 1;
+            }
+
+        .cart-header {
+            padding: 30px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+            .cart-item.selected {
+                border-color: var(--accent-blue);
+                background: rgba(59, 130, 246, 0.05);
+            }
+
+        .note-area {
+            background: rgba(245, 158, 11, 0.08);
+            border-left: 3px solid var(--warning);
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--warning);
+            font-style: italic;
+            border-radius: 4px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-all;
+        }
+
+        .placeholder-note {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .cart-footer {
+            padding: 30px 20px;
+            background: var(--bg-darker);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .remaining-box {
+            display: flex;
+            justify-content: space-between;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--success);
+            border-top: 1px dashed var(--border-color);
+            padding-top: 15px;
+            margin-top: 5px;
+        }
+
+        .btn-pay-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .btn-action {
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .btn-blue {
+            background: var(--accent-blue);
+            color: white;
+            grid-column: span 2;
+            margin-bottom: 5px;
+        }
+
+        .btn-green {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-split {
+            background: var(--warning);
+            color: white;
+            grid-column: span 2;
+            margin-bottom: 5px;
+            display: none;
+        }
+
+       
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--accent-blue);
+            }
+
+        @@media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .cart-panel, .cart-panel * {
+                visibility: visible;
+            }
+
+            .cart-panel {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white !important;
+                color: black !important;
+                border: none;
+            }
+
+            .cart-item {
+                border-bottom: 1px solid #eee !important;
+                background: white !important;
+                color: black !important;
+                padding: 10px 0 !important;
+                border-radius: 0;
+            }
+
+            .note-area, .placeholder-note, .btn-pay-grid, .sidebar, .main-content, .fa-xmark {
+                display: none !important;
+            }
+
+            .remaining-box {
+                color: black !important;
+                border-top: 2px solid black;
+                padding-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="brand-header">
+            <div class="logo-circle"><span>RM</span></div>
+            <h2 style="letter-spacing: 4px; margin: 0; font-weight: 900; font-size: 20px; color: white;">RESTO<span style="color: var(--accent-blue);">MANAGER</span></h2>
+        </div>
+        <div class="user-card">
+            <i class="fa-solid fa-circle-user" style="font-size:45px; color:var(--accent-blue); margin-bottom:12px;"></i>
+            <div style="font-weight:900; font-size:18px;">@Session["StaffName"]</div>
+            <div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">@Session["StaffRole"]</div>
+        </div>
+        <div class="table-list">
+            @foreach (var masa in Model)
+            {
+                <div class="table-btn" onclick="masaSec(@masa.Id, '@masa.TableNo', this)">
+                    <span><i class="fa-solid fa-chair" style="margin-right:12px;"></i> @masa.TableNo</span>
+                    <span class="status-badge @(masa.IsOccupied == true ? "status-dolu" : "status-bos")" id="stat-@masa.Id">
+                        @(masa.IsOccupied == true ? "DOLU" : "BOŞ")
+                    </span>
+                </div>
+            }
+        </div>
+        <div style="padding:25px; border-top:1px solid var(--border-color);">
+            @if (Session["StaffRole"]?.ToString() == "Admin")
+            {
+                <a href="/Admin/Index" style="display:block; color:var(--accent-blue); text-decoration:none; font-size:14px; font-weight:bold; margin-bottom:15px;"><i class="fa-solid fa-users-gear"></i> ADMIN PANELİ</a>
+            }
+            <a href="/Account/Logout" style="display:block; color:var(--danger); text-decoration:none; font-size:14px; font-weight:bold;"><i class="fa-solid fa-right-from-bracket"></i> OTURUMU KAPAT</a>
+        </div>
+    </div>
+    <div class="main-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+            <div style="position:relative;">
+                <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:18px; top:18px; color:var(--text-muted);"></i>
+                <input type="text" id="aramaKutusu" onkeyup="filtrele()" placeholder="Hızlı ürün ara..." style="width:380px; padding:18px 18px 18px 50px; background:var(--bg-panel); border:1px solid var(--border-color); border-radius:12px; color:white; outline:none;">
+            </div>
+            <div id="clock" style="font-weight:900; color:var(--accent-blue); font-size:22px;">00:00:00</div>
+        </div>
+        <div class="category-tabs">
+            <button class="tab-btn active" onclick="kategoriSec('Hepsi', this)">Hepsi</button>
+            <button class="tab-btn" onclick="kategoriSec('Corba', this)">Çorbalar</button>
+            <button class="tab-btn" onclick="kategoriSec('AnaYemek', this)">Ana Yemekler</button>
+            <button class="tab-btn" onclick="kategoriSec('Salata', this)">Salata & Meze</button>
+            <button class="tab-btn" onclick="kategoriSec('Tatli', this)">Tatlılar</button>
+            <button class="tab-btn" onclick="kategoriSec('Icecek', this)">İçecekler</button>
+        </div>
+        <div class="menu-grid" id="menuGrid">
+            @if (yemekler != null)
+            {
+                foreach (var yemek in yemekler)
+                {
+                    <div class="menu-card" data-category="@yemek.Category" onclick="urunEkle('@yemek.Name', @yemek.Price)">
+                        <h3 style="font-weight:700;">@yemek.Name</h3>
+                        <div style="color:var(--accent-blue); font-weight:900; font-size:20px;">@yemek.Price.ToString("N2") ₺</div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div class="cart-panel" id="rightPanel">
+        <div class="cart-header">
+            <h3 id="aktifMasaNo" style="margin:0; font-weight:900;">MASA SEÇİNİZ</h3>
+            <div style="display:flex; gap:15px;">
+                <button onclick="window.print()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:20px;"><i class="fa-solid fa-print"></i></button>
+                <button onclick="paneliKapat()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:24px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+        <div class="cart-items" id="cartArea"></div>
+        <div class="cart-footer">
+            <div id="secilenBox" style="display:none; justify-content:space-between; margin-bottom:10px; font-weight:700; color:var(--warning); font-size:16px;">
+                <span>SEÇİLEN TOPLAM:</span><span id="secilenTxt">0 ₺</span>
+            </div>
+            <div class="remaining-box"><span>TOPLAM:</span><span id="toplamTxt">0 ₺</span></div>
+            <div class="btn-pay-grid">
+                <button class="btn-action btn-split" id="btnSplit" onclick="secilenleriTahsilEt()">SEÇİLENLERİ TAHSİL ET</button>
+                <button class="btn-action btn-blue" onclick="siparisOnayla()">SİPARİŞİ ONAYLA</button>
+                <button class="btn-action btn-green" onclick="hesapKapat('NAKİT')">NAKİT</button>
+                <button class="btn-action btn-green" onclick="hesapKapat('KART')">KART</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('tr-TR'); }, 1000);
+        let activeMasa = null; let adisyonlar = {};
+        function masaSec(id, no, btn) {
+            activeMasa = { id, no };
+            document.querySelectorAll('.table-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('rightPanel').classList.add('open');
+            document.getElementById('aktifMasaNo').innerText = no + " ADİSYON";
+            if (!adisyonlar[id]) adisyonlar[id] = [];
+            updateCart();
+        }
+        function paneliKapat() {
+            document.getElementById('rightPanel').classList.remove('open');
+            document.querySelectorAll('.table-btn').forEach(b => b.classList.remove('active'));
+            activeMasa = null;
+        }
+        function urunEkle(ad, fiyat) {
+            if (!activeMasa) return;
+            adisyonlar[activeMasa.id].push({ id: Date.now() + Math.random(), ad, fiyat, not: "", selected: false });
+            updateCart();
+        }
+        function toggleItem(idx, event) {
+            if (event.target.closest('.note-area') || event.target.closest('.placeholder-note')) return;
+            adisyonlar[activeMasa.id][idx].selected = !adisyonlar[activeMasa.id][idx].selected;
+            updateCart();
+        }
+        function setNote(idx) {
+            const n = prompt("Ürün Notu:", adisyonlar[activeMasa.id][idx].not);
+            if (n !== null) { adisyonlar[activeMasa.id][idx].not = n; updateCart(); }
+        }
+        function updateCart() {
+            if (!activeMasa) return;
+            const area = document.getElementById('cartArea');
+            let total = 0, selTotal = 0, selCount = 0;
+            const items = adisyonlar[activeMasa.id];
+            area.innerHTML = items.map((item, idx) => {
+                total += item.fiyat;
+                if (item.selected) { selCount++; selTotal += item.fiyat; }
+                return `<div class="cart-item ${item.selected ? 'selected' : ''}" onclick="toggleItem(${idx}, event)">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <i class="fa-regular ${item.selected ? 'fa-square-check' : 'fa-square'} text-primary"></i>
+                                    <div style="font-weight:bold;">${item.ad}</div>
+                                </div>
+                                <div style="font-weight:900; color:var(--accent-blue)">${item.fiyat} ₺</div>
+                            </div>
+                            <div onclick="setNote(${idx})">${item.not ? `<div class="note-area">${item.not}</div>` : `<div class="placeholder-note">Not ekle...</div>`}</div>
+                        </div>`;
+            }).join('');
+            document.getElementById('toplamTxt').innerText = total + " ₺";
+            document.getElementById('secilenTxt').innerText = selTotal + " ₺";
+            document.getElementById('secilenBox').style.display = selCount > 0 ? 'flex' : 'none';
+            document.getElementById('btnSplit').style.display = selCount > 0 ? 'block' : 'none';
+        }
+        function siparisOnayla() {
+            if (!activeMasa || adisyonlar[activeMasa.id].length === 0) return;
+            document.getElementById('stat-' + activeMasa.id).className = 'status-badge status-dolu';
+            document.getElementById('stat-' + activeMasa.id).innerText = 'DOLU';
+        }
+        function secilenleriTahsilEt() {
+            adisyonlar[activeMasa.id] = adisyonlar[activeMasa.id].filter(i => !i.selected);
+            if (adisyonlar[activeMasa.id].length === 0) {
+                document.getElementById('stat-' + activeMasa.id).className = 'status-badge status-bos';
+                document.getElementById('stat-' + activeMasa.id).innerText = 'BOŞ';
+            }
+            updateCart();
+        }
+        function hesapKapat(tip) {
+            if (!activeMasa) return;
+            adisyonlar[activeMasa.id] = [];
+            document.getElementById('stat-' + activeMasa.id).className = 'status-badge status-bos';
+            document.getElementById('stat-' + activeMasa.id).innerText = 'BOŞ';
+            updateCart();
+        }
+        function kategoriSec(kat, btn) {
+            window.seciliKat = kat;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filtrele();
+        }
+        function filtrele() {
+            let aranan = document.getElementById("aramaKutusu").value.toLowerCase();
+            document.querySelectorAll(".menu-card").forEach(kart => {
+                let isim = kart.querySelector("h3").innerText.toLowerCase();
+                let kategori = kart.getAttribute("data-category");
+                kart.style.display = ((window.seciliKat === 'Hepsi' || !window.seciliKat || kategori === window.seciliKat) && isim.includes(aranan)) ? "block" : "none";
+            });
+        }
+    </script>
+</body>
+</html>

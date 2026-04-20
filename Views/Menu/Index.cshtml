@@ -1,0 +1,193 @@
+﻿@model IEnumerable<RestoManager.Models.MenuItems>
+@{
+    Layout = null; 
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Menü Yönetimi | V13 Archive</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-darker: #0f172a;
+            --bg-panel: #1e293b;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --danger: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 40px;
+            background-image: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+   
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-text {
+            font-weight: 900;
+            letter-spacing: 2px;
+            font-size: 26px;
+        }
+
+            .brand-text span {
+                color: var(--accent-blue);
+            }
+
+        .btn-panel {
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .btn-panel:hover {
+                background: var(--bg-panel);
+                color: white;
+                border-color: var(--accent-blue);
+            }
+
+        .btn-add {
+            padding: 14px 24px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+            .btn-add:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            }
+
+        .menu-table {
+            width: 100%;
+            background: var(--bg-panel);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            border-collapse: collapse;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+            .menu-table th {
+                background: rgba(0,0,0,0.2);
+                padding: 20px;
+                text-align: left;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--text-muted);
+            }
+
+            .menu-table td {
+                padding: 20px;
+                border-bottom: 1px solid var(--border-color);
+                font-size: 15px;
+            }
+
+        .category-badge {
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+        }
+
+        .action-link {
+            color: var(--text-muted);
+            font-size: 18px;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+            .action-link:hover {
+                color: var(--danger);
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-panel">
+            <div class="brand-text">MENÜ <span>YÖNETİMİ</span></div>
+
+            <a href="/Admin/Index" class="btn-panel">
+                <i class="fa-solid fa-house-chimney-user"></i> ADMİN PANELİNE DÖN
+            </a>
+        </div>
+
+        <div style="margin-bottom: 30px; display:flex; justify-content:space-between; align-items:center;">
+            <a href="/Menu/Ekle" class="btn-add">
+                <i class="fa-solid fa-square-plus"></i> YENİ LEZZET EKLE
+            </a>
+            <div style="color:var(--text-muted); font-size:14px; font-weight:700;">
+                <i class="fa-solid fa-list-ul"></i> Toplam <span style="color:white;">@Model.Count()</span> Ürün
+            </div>
+        </div>
+
+        <table class="menu-table">
+            <thead>
+                <tr>
+                    <th>LEZZET ADI</th>
+                    <th>KATEGORİ</th>
+                    <th>FİYAT</th>
+                    <th style="text-align:right;">İŞLEM</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong style="color:white;">@item.Name</strong></td>
+                        <td><span class="category-badge">@item.Category</span></td>
+                        <td><strong style="color:var(--accent-blue);">@item.Price.ToString("N2") ₺</strong></td>
+                        <td style="text-align:right;">
+                            <a href="/Menu/Sil/@item.Id" class="action-link" onclick="return confirm('Silmek istediğinize emin misiniz ?')">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+﻿@model RestoManager.Models.Staff
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestoManager | Giriş</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%233b82f6%22/><text y=%2250%%22 x=%2250%%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2250%22 fill=%22white%22 font-family=%22Segoe UI, sans-serif%22 font-weight=%22900%22>RM</text></svg>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-darker: #0f172a;
+            --bg-panel: #1e293b;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --danger: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+            background-image: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--bg-panel);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand-logo {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo-circle {
+            width: 75px;
+            height: 75px;
+            background: var(--accent-blue);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            transform: rotate(-6deg);
+        }
+
+            .logo-circle span {
+                color: white;
+                font-weight: 900;
+                font-size: 30px;
+                transform: rotate(6deg);
+            }
+
+        .brand-logo h2 {
+            letter-spacing: 4px;
+            font-weight: 900;
+            margin: 0;
+            font-size: 26px;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .error-box {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--danger);
+            color: #f87171;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-control {
+            background: var(--bg-darker) !important;
+            border: 1px solid var(--border-color) !important;
+            color: white !important;
+            padding: 14px 45px 14px 45px !important; /* Sağdan boşluk eklendi */
+            border-radius: 12px !important;
+            font-size: 15px;
+        }
+
+            .form-control:focus {
+                border-color: var(--accent-blue) !important;
+                box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+            }
+
+        .input-group-text {
+            background: transparent !important;
+            border: none !important;
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            color: var(--text-muted);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .password-toggle:hover {
+                color: var(--accent-blue);
+            }
+
+        .btn-login {
+            background: var(--accent-blue);
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+            .btn-login:hover {
+                background: #2563eb;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="brand-logo">
+            <div class="logo-circle"><span>RM</span></div>
+            <h2>RESTO<span style="color:var(--accent-blue);">MANAGER</span></h2>
+        </div>
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-box">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>@ViewBag.Error</span>
+            </div>
+        }
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+        {
+            <div class="mb-4 position-relative">
+                <span class="input-group-text"><i class="fa-solid fa-user-shield"></i></span>
+                @Html.TextBoxFor(x => x.Username, new { @class = "form-control", placeholder = "Kullanıcı Adı", required = "required" })
+            </div>
+            <div class="mb-4 position-relative">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                @Html.PasswordFor(x => x.Password, new { @id = "passInput", @class = "form-control", placeholder = "Şifre", required = "required" })
+                <i class="fa-solid fa-eye password-toggle" id="togglePass"></i>
+            </div>
+            <button type="submit" class="btn btn-primary btn-login">Giriş Yap <i class="fa-solid fa-arrow-right-to-bracket ms-2"></i></button>
+        }
+        <div class="footer-text">&copy; 2026 RestoManager | Tüm Hakları Saklıdır</div>
+    </div>
+
+    <script>
+        const togglePass = document.querySelector('#togglePass');
+        const passwordInput = document.querySelector('#passInput');
+
+        togglePass.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
+</body>
+</html>

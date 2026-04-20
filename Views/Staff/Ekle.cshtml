@@ -1,0 +1,145 @@
+﻿@model RestoManager.Models.Staff
+@{ Layout = null; }
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yeni Personel </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-darker: #0f172a;
+            --bg-panel: #1e293b;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --border-color: #334155;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        .card {
+            width: 400px;
+            background: var(--bg-panel);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-style {
+            width: 100%;
+            padding: 14px;
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+            .input-style:focus {
+                border-color: var(--accent-blue);
+            }
+
+        /* Şifre Göz İkonu Stili */
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: 0.2s;
+        }
+
+            .toggle-password:hover {
+                color: var(--accent-blue);
+            }
+
+        .btn-save {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+
+            .btn-save:hover {
+                background: #2563eb;
+                transform: translateY(-2px);
+            }
+
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2 style="text-align:center; margin-bottom:30px;"><i class="fa-solid fa-user-plus" style="color:var(--accent-blue)"></i> PERSONEL KAYDI</h2>
+
+        @using (Html.BeginForm("Ekle", "Staff", FormMethod.Post))
+        {
+            <label>Ad Soyad</label>
+            @Html.TextBoxFor(x => x.FullName, new { @class = "input-style", placeholder = "Örn: Ahmet Yılmaz", required = "required" })
+
+            <label>Kullanıcı Adı</label>
+            @Html.TextBoxFor(x => x.Username, new { @class = "input-style", placeholder = "Örn: ahmet_garson", required = "required" })
+
+            <label>Şifre</label>
+            <div class="password-container">
+                @Html.TextBoxFor(x => x.Password, new { @id = "passInput", @class = "input-style", type = "password", placeholder = "••••••", required = "required" })
+                <i class="fa-solid fa-eye toggle-password" id="togglePass"></i>
+            </div>
+
+            <label>Yetki Rolü</label>
+            <select name="Role" class="input-style">
+                <option value="Waiter">Waiter (Garson)</option>
+                <option value="Admin">Admin (Yönetici)</option>
+            </select>
+
+            <button type="submit" class="btn-save">PERSONELİ KAYDET</button>
+            <a href="@Url.Action("PersonelListesi")" style="display:block; text-align:center; margin-top:20px; color:#64748b; text-decoration:none; font-size:12px;">Vazgeç ve Dön</a>
+        }
+    </div>
+
+    <script>
+        const togglePass = document.querySelector('#togglePass');
+        const passwordInput = document.querySelector('#passInput');
+
+        togglePass.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            // İkonu değiştir
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
+</body>
+</html>

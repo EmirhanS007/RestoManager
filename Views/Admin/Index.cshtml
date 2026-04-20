@@ -1,0 +1,124 @@
+﻿@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestoManager | Admin Paneli</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%233b82f6%22/><text y=%2250%%22 x=%2250%%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2250%22 fill=%22white%22 font-family=%22Segoe UI, sans-serif%22 font-weight=%22900%22>RM</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-darker: #0f172a;
+            --bg-panel: #1e293b;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            overflow: hidden;
+        }
+
+        .admin-card {
+            width: 100%;
+            max-width: 650px;
+            background: var(--bg-panel);
+            padding: 50px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo-circle {
+            width: 75px;
+            height: 75px;
+            background: var(--accent-blue);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            transform: rotate(-6deg);
+        }
+
+            .logo-circle span {
+                color: white;
+                font-weight: 900;
+                font-size: 30px;
+                transform: rotate(6deg);
+            }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 35px;
+        }
+
+        .admin-btn {
+            padding: 30px 20px;
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .admin-btn:hover {
+                border-color: var(--accent-blue);
+                transform: translateY(-5px);
+                background: rgba(59, 130, 246, 0.05);
+            }
+
+            .admin-btn i {
+                font-size: 45px;
+                color: var(--accent-blue);
+                margin-bottom: 15px;
+            }
+    </style>
+</head>
+<body>
+    <div class="admin-card">
+        <div class="logo-circle"><span>RM</span></div>
+        <h1 style="letter-spacing:4px; margin: 0; font-weight: 900; font-size: 28px;">RESTO<span style="color:var(--accent-blue);">MANAGER</span></h1>
+
+        <div class="grid">
+            <a href="/Staff/PersonelListesi" class="admin-btn">
+                <i class="fa-solid fa-users-gear"></i>
+                <span>Personel Yönetimi</span>
+            </a>
+            <a href="/Menu/Index" class="admin-btn">
+                <i class="fa-solid fa-utensils"></i>
+                <span>Menü Yönetimi</span>
+            </a>
+            <a href="/Table/Index" class="admin-btn" style="grid-column: span 2;">
+                <i class="fa-solid fa-shop"></i>
+                <span>Salona Dön (Satış Ekranı)</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

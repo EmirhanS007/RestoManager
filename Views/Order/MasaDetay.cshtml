@@ -1,0 +1,248 @@
+﻿@model RestoManager.Models.Tables
+
+@{
+    Layout = null;
+    var yemekListesi = (List<RestoManager.Models.MenuItems>)ViewBag.Menu;
+    var siparisKalemleri = (List<RestoManager.Models.OrderItems>)ViewBag.Siparisler;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Masa Detay - @Model.TableNo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-darker: #0f172a;
+            --bg-panel: #1e293b;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --border-color: #334155;
+            --success: #10b981;
+            --danger: #ef4444;
+            --gold: #fbbf24;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: var(--bg-panel);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            grid-column: span 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .status-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 800;
+            border: 1px solid;
+        }
+
+        .status-empty {
+            color: var(--success);
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .status-occupied {
+            color: var(--danger);
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .menu-scroll {
+            max-height: 550px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .menu-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+            .menu-item:hover {
+                background: rgba(255, 255, 255, 0.07);
+                border-color: var(--accent-blue);
+            }
+
+        .price-tag {
+            color: var(--gold);
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .btn-add {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: #94a3b8;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+            .btn-back:hover {
+                color: white;
+            }
+
+        .adisyon-satir {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .toplam-alan {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border-color);
+            text-align: right;
+            font-size: 24px;
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="@Url.Action("Index", "Table")" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Salon Görünümüne Dön</a>
+
+    <div class="container">
+
+        <div class="header panel">
+            <h1 style="margin:0; letter-spacing: 2px;">@Model.TableNo <small style="font-size: 14px; color: #64748b;">(Masa Detay)</small></h1>
+            <span class="status-badge @(Model.IsOccupied == true ? "status-occupied" : "status-empty")">
+                @(Model.IsOccupied == true ? "MASA DOLU" : "MASA BOŞ")
+            </span>
+        </div>
+
+        <div class="panel">
+            <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <i class="fa-solid fa-file-invoice-dollar"></i> Adisyon Detayı
+            </h3>
+
+            @if (siparisKalemleri != null && siparisKalemleri.Count > 0)
+            {
+                <div style="margin-top:20px;">
+                    @foreach (var kalem in siparisKalemleri)
+                    {
+                        <div class="adisyon-satir">
+                            <span>@kalem.MenuItems.Name</span>
+                            <span style="font-weight:bold;">@kalem.MenuItems.Price TL</span>
+                        </div>
+                    }
+
+                    <div class="toplam-alan">
+                        @{
+                            
+                            var aktifOrder = Model.Orders.FirstOrDefault(x => x.IsPaid == false);
+                            var toplam = aktifOrder != null ? aktifOrder.TotalAmount : 0;
+                        }
+                        TOPLAM: @toplam TL
+                    </div>
+
+                    @using (Html.BeginForm("HesabiKapat", "Order", FormMethod.Post))
+                    {
+                        <input type="hidden" name="masaId" value="@Model.Id" />
+                        <button type="submit" class="btn-add" style="background: var(--danger); width: 100%; margin-top: 25px; padding: 15px; font-size: 16px;">
+                            <i class="fa-solid fa-cash-register"></i> HESABI KAPAT VE MASAYI BOŞALT
+                        </button>
+                    }
+                </div>
+            }
+            else
+            {
+                <p style="color: #64748b; text-align: center; margin-top: 50px;">
+                    <i class="fa-solid fa-receipt" style="font-size: 40px; display: block; margin-bottom: 10px;"></i>
+                    Henüz sipariş eklenmedi.<br>Sağ taraftan ürün seçebilirsiniz.
+                </p>
+            }
+        </div>
+
+        <div class="panel">
+            <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <i class="fa-solid fa-utensils"></i> Restoran Menüsü
+            </h3>
+            <div class="menu-scroll">
+                @if (yemekListesi != null)
+                {
+                    foreach (var urun in yemekListesi)
+                    {
+                        <div class="menu-item">
+                            <div>
+                                <div style="font-weight: bold;">@urun.Name</div>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span class="price-tag">@urun.Price TL</span>
+
+                                @using (Html.BeginForm("SiparisEkle", "Order", FormMethod.Post))
+                                {
+                                    <input type="hidden" name="masaId" value="@Model.Id" />
+                                    <input type="hidden" name="urunId" value="@urun.Id" />
+                                    <button type="submit" class="btn-add"><i class="fa-solid fa-plus"></i> Ekle</button>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

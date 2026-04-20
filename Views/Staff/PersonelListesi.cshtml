@@ -1,0 +1,201 @@
+﻿@model IEnumerable<RestoManager.Models.Staff>
+@{
+    Layout = null;
+    var sessionUserId = Session["StaffId"] != null ? (int)Session["StaffId"] : 0;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Personel Yönetimi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-darker: #0f172a;
+            --bg-panel: #1e293b;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --danger: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            padding: 40px;
+            margin: 0;
+            background-image: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-text {
+            font-weight: 800;
+            letter-spacing: 2px;
+            font-size: 22px;
+        }
+
+            .brand-text span {
+                color: var(--accent-blue);
+            }
+
+        /* Menü sayfasından gelen şık buton stili */
+        .btn-panel {
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .btn-panel:hover {
+                background: var(--bg-panel);
+                color: white;
+                border-color: var(--accent-blue);
+            }
+
+        .btn-add {
+            padding: 12px 24px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .btn-add:hover {
+                background: #2563eb;
+                transform: translateY(-3px);
+                box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+            }
+
+        .staff-table {
+            width: 100%;
+            background: var(--bg-panel);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            border-collapse: collapse;
+            overflow: hidden;
+        }
+
+            .staff-table th {
+                background: rgba(0,0,0,0.2);
+                padding: 18px;
+                text-align: left;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--text-muted);
+            }
+
+            .staff-table td {
+                padding: 18px;
+                border-bottom: 1px solid var(--border-color);
+                font-size: 15px;
+            }
+
+        .role-pill {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+        }
+
+        .action-link {
+            color: var(--text-muted);
+            transition: 0.2s;
+            font-size: 18px;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+            .action-link:hover {
+                color: var(--danger);
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-panel">
+            <div class="brand-text">RESTO<span>MANAGER</span> | PERSONEL</div>
+
+            <a href="/Admin/Index" class="btn-panel">
+                <i class="fa-solid fa-house-chimney-user"></i> ADMİN PANELİNE DÖN
+            </a>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <a href="@Url.Action("Ekle")" class="btn btn-add">
+                <i class="fa-solid fa-user-plus"></i> YENİ PERSONEL EKLE
+            </a>
+        </div>
+
+        <table class="staff-table">
+            <thead>
+                <tr>
+                    <th>AD SOYAD</th>
+                    <th>KULLANICI ADI</th>
+                    <th>YETKİ</th>
+                    <th style="text-align:right;">İŞLEM</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td><strong style="color:white;">@s.FullName</strong></td>
+                        <td>@s.Username</td>
+                        <td><span class="role-pill">@s.Role</span></td>
+                        <td style="text-align:right;">
+                            @if (s.Id != sessionUserId)
+                            {
+                                <a href="@Url.Action("Sil", new { id = s.Id })"
+                                   class="action-link"
+                                   onclick="return confirm('Bu personeli sistemden silmek istediğinize emin misiniz?')">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-user-check" title="Bu Sizsiniz" style="color:var(--accent-blue); cursor: help;"></i>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
